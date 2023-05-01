@@ -77,11 +77,12 @@ int main(int argc, char *argv[])
             }
         }
     }
+    
+    // compute initial value of the residual before any smoothing
+    residual_0 = compute_residual(phi[0], aux[0], f[0], n, comm);
     // starting the timer
     Timer t;
     t.tic();
-    // compute initial value of the residual before any smoothing
-    residual_0 = compute_residual(phi[0], aux[0], f[0], n, comm);
     MPI_Barrier(comm);
     for (i_mgcycles = 1; i_mgcycles <= n_mgcycles; i_mgcycles++)
     {
