@@ -77,6 +77,9 @@ int main(int argc, char *argv[])
             }
         }
     }
+    // starting the timer
+    Timer t;
+    t.tic();
     // compute initial value of the residual before any smoothing
     residual_0 = compute_residual(phi[0], aux[0], f[0], n, comm);
     MPI_Barrier(comm);
@@ -85,14 +88,17 @@ int main(int argc, char *argv[])
         multigrid_cycle(phi, f, aux, n, n_sweeps, n_levels, 0, comm);
         MPI_Barrier(comm);
     }
+    // timer stops
+    double timespent = t.toc();
     // compute residual to report
     residual = compute_residual(phi[0], aux[0], f[0], n, comm);
     deallocate_arrays(phi, f, aux, n, n_levels);
-    // print
+    // print output
     if (rank == 0)
     {
         printf("with %d nodes,original error is %f,after %d multicycles with %d sweeps, the error is %f\n", n_nodes,
                residual_0, n_mgcycles, n_sweeps, residual);
+        printf("Parallel time spent: %f\n", timespent);
     }
     MPI_Finalize();
 }
